@@ -1,25 +1,18 @@
 package com.cbrain.cmh.selvbetjening;
 
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import android.app.*;
+import android.os.*;
+import android.util.*;
+import android.widget.*;
+import org.json.*;
+import java.util.*;
 
 
 public class MainActivity extends ListActivity {
 
     // URL to get contacts JSON
-    private static String url = "https://raw.githubusercontent.com/mobilesiri/JSON-Parsing-in-Android/master/index.html";
+    //String url;
+    String url = "https://raw.githubusercontent.com/mobilesiri/JSON-Parsing-in-Android/master/index.html";
 
     // JSON Node names
     private static final String TAG_STUDENTINFO = "studentsinfo";
@@ -31,6 +24,8 @@ public class MainActivity extends ListActivity {
     private static final String TAG_PHONE = "phone";
     private static final String TAG_PHONE_MOBILE = "mobile";
     private static final String TAG_PHONE_HOME = "home";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

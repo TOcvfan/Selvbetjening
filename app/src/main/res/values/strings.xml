@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Selvbetjening</string>
+    <string name="url2">https://raw.githubusercontent.com/mobilesiri/JSON-Parsing-in-Android/master/index.html</string>
 </resources>
