@@ -11,9 +11,9 @@ import java.util.*;
 public class MainActivity extends ListActivity {
 
     // URL to get contacts JSON
-    //String url;
-    String url = "https://raw.githubusercontent.com/mobilesiri/JSON-Parsing-in-Android/master/index.html";
+    String url;
 
+    //url = new URL(getString(R.string.url2));
     // JSON Node names
     private static final String TAG_STUDENTINFO = "studentsinfo";
     private static final String TAG_ID = "id";
@@ -31,7 +31,7 @@ public class MainActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        url = this.getString(R.string.url2);
         // Calling async task to get json
         new GetStudents().execute();
     }
