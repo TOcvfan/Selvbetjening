@@ -45,12 +45,8 @@ public class WebRequest {
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
             conn.setDoInput(true);
+            conn.setRequestMethod("GET");
 
-            if (requestmethod == POST) {
-                conn.setRequestMethod("POST");
-            } else if (requestmethod == GET) {
-                conn.setRequestMethod("GET");
-            }
 
             if (params != null) {
                 OutputStream os = conn.getOutputStream();

@@ -10,22 +10,14 @@ import java.util.*;
 
 public class MainActivity extends ListActivity {
 
-    // URL to get contacts JSON
+
     String url;
 
-    //url = new URL(getString(R.string.url2));
+
     // JSON Node names
-    private static final String TAG_STUDENTINFO = "studentsinfo";
-    private static final String TAG_ID = "id";
-    private static final String TAG_NAME = "name";
-    private static final String TAG_EMAIL = "email";
-    private static final String TAG_ADDRESS = "address";
-    private static final String TAG_GENDER = "gender";
-    private static final String TAG_PHONE = "phone";
-    private static final String TAG_PHONE_MOBILE = "mobile";
-    private static final String TAG_PHONE_HOME = "home";
-
-
+    private static final String PROCESSES = "processes";
+    private static final String PROCESSLINK = "processlink";
+    private static final String PROCESSTITLE = "processtitle";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +25,16 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
         url = this.getString(R.string.url2);
         // Calling async task to get json
-        new GetStudents().execute();
+        new GetLinks().execute();
     }
 
     /**
      * Async task class to get json by making HTTP call
      */
-    private class GetStudents extends AsyncTask<Void, Void, Void> {
+    private class GetLinks extends AsyncTask<Void, Void, Void> {
 
         // Hashmap for ListView
-        ArrayList<HashMap<String, String>> studentList;
+        ArrayList<HashMap<String, String>> linkList;
         ProgressDialog pDialog;
 
         @Override
@@ -64,8 +56,8 @@ public class MainActivity extends ListActivity {
             String jsonStr = webreq.makeWebServiceCall(url, WebRequest.GET);
 
             Log.d("Response: ", "> " + jsonStr);
-
-            studentList = ParseJSON(jsonStr);
+            // place json parse here
+            linkList = ParseJSON(jsonStr);
 
             return null;
         }
@@ -80,10 +72,9 @@ public class MainActivity extends ListActivity {
              * Updating parsed JSON data into ListView
              * */
             ListAdapter adapter = new SimpleAdapter(
-                    MainActivity.this, studentList,
-                    R.layout.list_item, new String[]{TAG_NAME, TAG_EMAIL,
-                    TAG_PHONE_MOBILE}, new int[]{R.id.name,
-                    R.id.email, R.id.mobile});
+                    MainActivity.this, linkList,
+                    R.layout.list_item, new String[]{PROCESSLINK, PROCESSTITLE}, new int[]{R.id.processlink,
+                    R.id.processtitle});
 
             setListAdapter(adapter);
         }
@@ -94,41 +85,33 @@ public class MainActivity extends ListActivity {
         if (json != null) {
             try {
                 // Hashmap for ListView
-                ArrayList<HashMap<String, String>> studentList = new ArrayList<HashMap<String, String>>();
+                ArrayList<HashMap<String, String>> linkList = new ArrayList<HashMap<String, String>>();
 
                 JSONObject jsonObj = new JSONObject(json);
 
                 // Getting JSON Array node
-                JSONArray students = jsonObj.getJSONArray(TAG_STUDENTINFO);
+                JSONArray links = jsonObj.getJSONArray(PROCESSES);
 
                 // looping through All Students
-                for (int i = 0; i < students.length(); i++) {
-                    JSONObject c = students.getJSONObject(i);
+                for (int i = 0; i < links.length(); i++) {
+                    JSONObject c = links.getJSONObject(i);
 
-                    String id = c.getString(TAG_ID);
-                    String name = c.getString(TAG_NAME);
-                    String email = c.getString(TAG_EMAIL);
-                    String address = c.getString(TAG_ADDRESS);
-                    String gender = c.getString(TAG_GENDER);
 
-                    // Phone node is JSON Object
-                    JSONObject phone = c.getJSONObject(TAG_PHONE);
-                    String mobile = phone.getString(TAG_PHONE_MOBILE);
-                    String home = phone.getString(TAG_PHONE_HOME);
+                    String pLink = c.getString(PROCESSLINK);
+                    String pTitle = c.getString(PROCESSTITLE);
 
-                    // tmp hashmap for single student
-                    HashMap<String, String> student = new HashMap<String, String>();
+
+                    // tmp hashmap for single link
+                    HashMap<String, String> link = new HashMap<String, String>();
 
                     // adding each child node to HashMap key => value
-                    student.put(TAG_ID, id);
-                    student.put(TAG_NAME, name);
-                    student.put(TAG_EMAIL, email);
-                    student.put(TAG_PHONE_MOBILE, mobile);
+                    link.put(PROCESSLINK, pLink);
+                    link.put(PROCESSTITLE, pTitle);
 
-                    // adding student to students list
-                    studentList.add(student);
+                    // adding link to links list
+                    linkList.add(link);
                 }
-                return studentList;
+                return linkList;
             } catch (JSONException e) {
                 e.printStackTrace();
                 return null;
