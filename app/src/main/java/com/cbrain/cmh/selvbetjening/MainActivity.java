@@ -1,30 +1,50 @@
 package com.cbrain.cmh.selvbetjening;
 
 import android.app.*;
-import android.os.*;
-import android.util.*;
-import android.widget.*;
-import org.json.*;
-import java.util.*;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends AppCompatActivity {
 
+    private String TAG = MainActivity.class.getSimpleName();
+
+    private ProgressDialog pDialog;
+    private ListView lv;
 
     String url;
-
 
     // JSON Node names
     private static final String PROCESSES = "processes";
     private static final String PROCESSLINK = "processlink";
     private static final String PROCESSTITLE = "processtitle";
 
+    ArrayList<HashMap<String, String>> linkList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        url = this.getString(R.string.url2);
-        // Calling async task to get json
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+        linkList = new ArrayList<>();
+
+        lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
 
@@ -34,7 +54,7 @@ public class MainActivity extends ListActivity {
     private class GetLinks extends AsyncTask<Void, Void, Void> {
 
         // Hashmap for ListView
-        ArrayList<HashMap<String, String>> linkList;
+
         ProgressDialog pDialog;
 
         @Override
@@ -53,9 +73,9 @@ public class MainActivity extends ListActivity {
             WebRequest webreq = new WebRequest();
 
             // Making a request to url and getting response
-            String jsonStr = webreq.makeWebServiceCall(url, WebRequest.GET);
+            String jsonStr = webreq.makeServiceCall(url);
 
-            Log.d("Response: ", "> " + jsonStr);
+            Log.d(TAG, "Response from url: " + jsonStr);
             // place json parse here
             linkList = ParseJSON(jsonStr);
 
@@ -76,7 +96,7 @@ public class MainActivity extends ListActivity {
                     R.layout.list_item, new String[]{PROCESSLINK, PROCESSTITLE}, new int[]{R.id.processlink,
                     R.id.processtitle});
 
-            setListAdapter(adapter);
+            lv.setAdapter(adapter);
         }
 
     }
@@ -96,10 +116,8 @@ public class MainActivity extends ListActivity {
                 for (int i = 0; i < links.length(); i++) {
                     JSONObject c = links.getJSONObject(i);
 
-
                     String pLink = c.getString(PROCESSLINK);
                     String pTitle = c.getString(PROCESSTITLE);
-
 
                     // tmp hashmap for single link
                     HashMap<String, String> link = new HashMap<String, String>();
@@ -112,14 +130,35 @@ public class MainActivity extends ListActivity {
                     linkList.add(link);
                 }
                 return linkList;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+
             }
         } else {
-            Log.e("ServiceHandler", "Couldn't get any data from the url");
-            return null;
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG)
+                            .show();
+                }
+            });
+
         }
+
+        return null;
+
     }
 
 }
