@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity {
+public class Controller extends AppCompatActivity {
 
-    private String TAG = MainActivity.class.getSimpleName();
+    private String TAG = Controller.class.getSimpleName();
 
     private ProgressDialog pDialog;
     private ListView lv;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.MainView);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog = new ProgressDialog(Controller.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
              * Updating parsed JSON data into ListView
              * */
             ListAdapter adapter = new SimpleAdapter(
-                    MainActivity.this, linkList,
+                    Controller.this, linkList,
                     R.layout.list_item, new String[]{PROCESSLINK, PROCESSTITLE}, new int[]{R.id.processlink,
                     R.id.processtitle});
 

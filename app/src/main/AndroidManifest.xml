@@ -5,11 +5,11 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/skatindexpng"
-        android:label=""
+        android:icon="@mipmap/ic_launcher"
+        android:label="Skat"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Controller">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
