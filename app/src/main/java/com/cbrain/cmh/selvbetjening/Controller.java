@@ -1,11 +1,15 @@
 package com.cbrain.cmh.selvbetjening;
 
 import android.app.*;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -41,15 +45,14 @@ public class Controller extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+
         linkList = new ArrayList<>();
         url = this.getString(R.string.url);
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
 
-    /**
-     * Async task class to get json by making HTTP call
-     */
+
     private class GetLinks extends AsyncTask<Void, Void, Void> {
 
 
@@ -65,26 +68,15 @@ public class Controller extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-            Document doc = null;
 
+            Document doc = null;
             Elements links;
-            // Making a request to url and getting response
 
             try {
                 doc = Jsoup.connect(url).get();
 
+                links = doc.getElementsByClass("processlink");
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            links = doc.getElementsByClass("processlink");
-
-
-            Log.d(TAG, "Response from url: "  + links + " : ");
-
-
-            try {
                 linkList = ParseHTML(links);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -96,12 +88,10 @@ public class Controller extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            // Dismiss the progress dialog
+
             if (pDialog.isShowing())
                 pDialog.dismiss();
-            /**
-             * Updating parsed JSON data into ListView
-             * */
+
             ListAdapter adapter = new SimpleAdapter(
                     Controller.this, linkList,
                     R.layout.list_item, new String[]{TITLE, LINK}, new int[]{R.id.title});
@@ -114,39 +104,31 @@ public class Controller extends AppCompatActivity {
     private ArrayList<HashMap<String, String>> ParseHTML(Elements links) throws IOException {
 
         if (links != null) {
-            // Hashmap for ListView
-            ArrayList<HashMap<String, String>> studentList = new ArrayList<HashMap<String, String>>();
 
+            ArrayList<HashMap<String, String>> linkList = new ArrayList<>();
 
-            // looping through All Students
             for (Element link : links) {
 
-
-                String linkhref = this.getString(R.string.http) + link.select("a").attr("href");
+                final String linkhref = this.getString(R.string.http) + link.select("a").attr("href");
                 String linktext = link.text();
 
-                // Phone node is JSON Object
+                HashMap<String, String> student = new HashMap<>();
 
-                // tmp hashmap for single student
-                HashMap<String, String> student = new HashMap<String, String>();
-
-                // adding each child node to HashMap key => value
                 student.put(TITLE, linktext);
                 student.put(LINK, linkhref);
 
+                linkList.add(student);
 
-                // adding student to students list
-                studentList.add(student);
             }
-            return studentList;
+            return linkList;
         }
         else {
-            Log.e(TAG, "Couldn't get json from server.");
+            Log.e(TAG, "Couldn't get html from server.");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(),
-                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            "Couldn't get html from server. Check LogCat for possible errors!",
                             Toast.LENGTH_LONG)
                             .show();
                 }

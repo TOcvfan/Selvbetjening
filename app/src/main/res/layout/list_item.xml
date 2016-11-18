@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <!-- title Label -->
+
     <TextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
@@ -16,13 +17,13 @@
         android:textStyle="bold"
         android:text="Title"/>
 
-
-    <!-- link label -->
     <ImageView
         android:id="@+id/link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="start"
+
+        android:src="@drawable/ic_action_name"
         android:autoLink="web"
         />
 
