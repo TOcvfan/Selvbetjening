@@ -4,34 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Name Label -->
+    <!-- title Label -->
     <TextView
-        android:id="@+id/processtitle"
+        android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
-        android:text="Link"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="Title"/>
 
-    <!-- Email label -->
-    <TextView
-        android:id="@+id/processlink"
-        android:autoLink="web"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="2dip"
-        android:text="Email" />
 
-    <!-- Mobile number label -->
-    <TextView
-        android:id="@+id/mobile"
+    <!-- link label -->
+    <ImageView
+        android:id="@+id/link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
-        android:gravity="left"
-        android:text="Mobile: " />
+        android:gravity="start"
+        android:autoLink="web"
+        />
 
 </LinearLayout>

@@ -122,7 +122,7 @@ public class Controller extends AppCompatActivity {
             for (Element link : links) {
 
 
-                String linkhref = "http://lev-demo.cbrain.net" + link.select("a").attr("href");
+                String linkhref = this.getString(R.string.http) + link.select("a").attr("href");
                 String linktext = link.text();
 
                 // Phone node is JSON Object
