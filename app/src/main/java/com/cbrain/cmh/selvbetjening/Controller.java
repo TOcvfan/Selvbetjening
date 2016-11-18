@@ -11,10 +11,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,24 +27,22 @@ public class Controller extends AppCompatActivity {
     private ProgressDialog pDialog;
     private ListView lv;
 
-    String url;
+    private static String url;
 
-    // JSON Node names
-    private static final String PROCESSES = "processes";
-    private static final String PROCESSLINK = "processlink";
-    private static final String PROCESSTITLE = "processtitle";
+    private static final String TITLE = "title";
+    private static final String LINK = "link";
 
     ArrayList<HashMap<String, String>> linkList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.MainView);
+        setContentView(R.layout.main_view);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         linkList = new ArrayList<>();
-
+        url = this.getString(R.string.url);
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
@@ -53,9 +52,6 @@ public class Controller extends AppCompatActivity {
      */
     private class GetLinks extends AsyncTask<Void, Void, Void> {
 
-        // Hashmap for ListView
-
-        ProgressDialog pDialog;
 
         @Override
         protected void onPreExecute() {
@@ -70,14 +66,29 @@ public class Controller extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
-            WebRequest webreq = new WebRequest();
+            Document doc = null;
 
+            Elements links;
             // Making a request to url and getting response
-            String jsonStr = webreq.makeServiceCall(url);
 
-            Log.d(TAG, "Response from url: " + jsonStr);
-            // place json parse here
-            linkList = ParseJSON(jsonStr);
+            try {
+                doc = Jsoup.connect(url).get();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            links = doc.getElementsByClass("processlink");
+
+
+            Log.d(TAG, "Response from url: "  + links + " : ");
+
+
+            try {
+                linkList = ParseHTML(links);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return null;
         }
@@ -93,57 +104,43 @@ public class Controller extends AppCompatActivity {
              * */
             ListAdapter adapter = new SimpleAdapter(
                     Controller.this, linkList,
-                    R.layout.list_item, new String[]{PROCESSLINK, PROCESSTITLE}, new int[]{R.id.processlink,
-                    R.id.processtitle});
+                    R.layout.list_item, new String[]{TITLE, LINK}, new int[]{R.id.title});
 
             lv.setAdapter(adapter);
         }
 
     }
 
-    private ArrayList<HashMap<String, String>> ParseJSON(String json) {
-        if (json != null) {
-            try {
-                // Hashmap for ListView
-                ArrayList<HashMap<String, String>> linkList = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> ParseHTML(Elements links) throws IOException {
 
-                JSONObject jsonObj = new JSONObject(json);
+        if (links != null) {
+            // Hashmap for ListView
+            ArrayList<HashMap<String, String>> studentList = new ArrayList<HashMap<String, String>>();
 
-                // Getting JSON Array node
-                JSONArray links = jsonObj.getJSONArray(PROCESSES);
 
-                // looping through All Students
-                for (int i = 0; i < links.length(); i++) {
-                    JSONObject c = links.getJSONObject(i);
+            // looping through All Students
+            for (Element link : links) {
 
-                    String pLink = c.getString(PROCESSLINK);
-                    String pTitle = c.getString(PROCESSTITLE);
 
-                    // tmp hashmap for single link
-                    HashMap<String, String> link = new HashMap<String, String>();
+                String linkhref = "http://lev-demo.cbrain.net" + link.select("a").attr("href");
+                String linktext = link.text();
 
-                    // adding each child node to HashMap key => value
-                    link.put(PROCESSLINK, pLink);
-                    link.put(PROCESSTITLE, pTitle);
+                // Phone node is JSON Object
 
-                    // adding link to links list
-                    linkList.add(link);
-                }
-                return linkList;
-            } catch (final JSONException e) {
-                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
+                // tmp hashmap for single student
+                HashMap<String, String> student = new HashMap<String, String>();
 
+                // adding each child node to HashMap key => value
+                student.put(TITLE, linktext);
+                student.put(LINK, linkhref);
+
+
+                // adding student to students list
+                studentList.add(student);
             }
-        } else {
+            return studentList;
+        }
+        else {
             Log.e(TAG, "Couldn't get json from server.");
             runOnUiThread(new Runnable() {
                 @Override
