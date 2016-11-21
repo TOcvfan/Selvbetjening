@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -45,13 +46,11 @@ public class Controller extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-
         linkList = new ArrayList<>();
         url = this.getString(R.string.url);
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
-
 
     private class GetLinks extends AsyncTask<Void, Void, Void> {
 
@@ -112,6 +111,13 @@ public class Controller extends AppCompatActivity {
                 final String linkhref = this.getString(R.string.http) + link.select("a").attr("href");
                 String linktext = link.text();
 
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkhref));
+                        startActivity(browserIntent);
+                    }
+                });
                 HashMap<String, String> student = new HashMap<>();
 
                 student.put(TITLE, linktext);
@@ -120,6 +126,7 @@ public class Controller extends AppCompatActivity {
                 linkList.add(student);
 
             }
+
             return linkList;
         }
         else {
@@ -135,9 +142,7 @@ public class Controller extends AppCompatActivity {
             });
 
         }
-
         return null;
-
     }
 
 }
