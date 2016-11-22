@@ -2,4 +2,6 @@
     <string name="app_name">Selvbetjening</string>
     <string name="url">http://lev-demo.cbrain.net/selfservicewebsite/submissions</string>
     <string name="http">http://lev-demo.cbrain.net</string>
+    <string name="kunde">Skat</string>
+    <string name="pil">http://tech-neet.com/wp-content/uploads/arrow-right.png</string>
 </resources>

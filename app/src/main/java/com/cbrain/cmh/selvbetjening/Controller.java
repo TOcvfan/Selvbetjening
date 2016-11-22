@@ -43,9 +43,11 @@ public class Controller extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setTitle("");
+        toolbar.setSubtitle("");
         linkList = new ArrayList<>();
         url = this.getString(R.string.url);
         lv = (ListView) findViewById(R.id.list);
@@ -68,7 +70,7 @@ public class Controller extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
 
-            Document doc = null;
+            Document doc;
             Elements links;
 
             try {
