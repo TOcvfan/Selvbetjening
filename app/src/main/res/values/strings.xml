@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Selvbetjening</string>
-    <string name="url">http://lev-demo.cbrain.net/selfservicewebsite/submissions</string>
-    <string name="http">http://lev-demo.cbrain.net</string>
-    <string name="kunde">Skat</string>
-    <string name="pil">http://tech-neet.com/wp-content/uploads/arrow-right.png</string>
+    <string name="app_name">Selvbetjening</string><!--Denne fungerer som tekst undertoolbar -->
+    <string name="path1">/selfservicewebsite/submissions</string><!--URL til siden med links -->
+    <string name="http">http://lev-demo.cbrain.net</string><!--dette er til de links der vises i App'en og nødvendig for at de virker-->
+    <string name="kunde">Skat</string><!--Navn som App'en vil få når den er installeret -->
+    <string name="pil">http://tech-neet.com/wp-content/uploads/arrow-right.png</string><!-- -->
+
 </resources>

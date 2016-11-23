@@ -32,6 +32,8 @@ public class Controller extends AppCompatActivity {
     private ProgressDialog pDialog;
     private ListView lv;
 
+    private static String http;
+    private static String path1;
     private static String url;
 
     private static final String TITLE = "title";
@@ -49,7 +51,9 @@ public class Controller extends AppCompatActivity {
         toolbar.setTitle("");
         toolbar.setSubtitle("");
         linkList = new ArrayList<>();
-        url = this.getString(R.string.url);
+        http = this.getString(R.string.http);
+        path1 = this.getString(R.string.path1);
+        url = http + path1;
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
