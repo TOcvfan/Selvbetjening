@@ -2,6 +2,7 @@ package com.cbrain.cmh.selvbetjening;
 
 import android.app.*;
 import android.content.Intent;
+import android.graphics.*;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,8 +22,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+
 
 
 public class Controller extends AppCompatActivity {
@@ -31,10 +35,10 @@ public class Controller extends AppCompatActivity {
 
     private ProgressDialog pDialog;
     private ListView lv;
-
+    Bitmap bitmap;
     private static String http;
-    private static String path1;
     private static String url;
+    private static String logoLink;
 
     private static final String TITLE = "title";
     private static final String LINK = "link";
@@ -45,15 +49,18 @@ public class Controller extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //ImageView vi=(ImageView)findViewById(R.id.logo);
+        //vi.setImageBitmap(bitmap);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle("");
         toolbar.setSubtitle("");
         linkList = new ArrayList<>();
         http = this.getString(R.string.http);
-        path1 = this.getString(R.string.path1);
-        url = http + path1;
+
+        url = http + this.getString(R.string.path1);
+        //logoLink = http + this.getString(R.string.logo);
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
@@ -74,13 +81,22 @@ public class Controller extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
 
+            Document logo;
             Document doc;
             Elements links;
+            Elements img;
 
             try {
                 doc = Jsoup.connect(url).get();
-
                 links = doc.getElementsByClass("processlink");
+                //logo = Jsoup.connect(logoLink).get();
+                //img = logo.getElementsByClass("");
+                //String imgSrc = img.attr("src");
+
+                // Download image from URL
+                //InputStream input = new java.net.URL(imgSrc).openStream();
+                // Decode Bitmap
+                //bitmap = BitmapFactory.decodeStream(input);
 
                 linkList = ParseHTML(links);
             } catch (IOException e) {
@@ -114,7 +130,7 @@ public class Controller extends AppCompatActivity {
 
             for (Element link : links) {
 
-                final String linkhref = this.getString(R.string.http) + link.select("a").attr("href");
+                final String linkhref = http + link.select("a").attr("href");
                 String linktext = link.text();
 
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
