@@ -5,7 +5,7 @@
         </shape>
     </item>
     <item>
-        <bitmap android:src="@drawable/skatindexpng" android:gravity="center" />
+        <bitmap android:src="@drawable/toolbar_image" android:gravity="center" />
 
     </item>
 </layer-list>

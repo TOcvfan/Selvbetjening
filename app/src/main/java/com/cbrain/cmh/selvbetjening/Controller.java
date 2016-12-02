@@ -26,9 +26,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
-
 public class Controller extends AppCompatActivity {
 
     private String TAG = Controller.class.getSimpleName();
@@ -72,10 +69,8 @@ public class Controller extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(Controller.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+
+
         }
 
         @Override
@@ -110,8 +105,6 @@ public class Controller extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
-            if (pDialog.isShowing())
-                pDialog.dismiss();
 
             ListAdapter adapter = new SimpleAdapter(
                     Controller.this, linkList,
@@ -135,8 +128,12 @@ public class Controller extends AppCompatActivity {
 
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkhref));
+                    public void onItemClick(AdapterView<?> parent,
+                                            View view,
+                                            int position,
+                                            long id) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                                                          Uri.parse(linkhref));
                         startActivity(browserIntent);
                     }
                 });
@@ -146,7 +143,6 @@ public class Controller extends AppCompatActivity {
                 student.put(LINK, linkhref);
 
                 linkList.add(student);
-
             }
 
             return linkList;
@@ -166,5 +162,4 @@ public class Controller extends AppCompatActivity {
         }
         return null;
     }
-
 }
