@@ -3,5 +3,4 @@
     <string name="path1">/selfservicewebsite/submissions</string><!--URL til siden med links -->
     <string name="http">http://lev-demo.cbrain.net</string><!--dette er til de links der vises i App'en og nødvendig for at de virker-->
     <string name="kunde">Skat selvbetjening</string><!--Navn som App'en vil få når den er installeret -->
-    <string name="logo">/SelfServiceWebsite/Themes/UM/Images</string><!-- -->
 </resources>

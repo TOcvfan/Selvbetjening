@@ -1,8 +1,6 @@
 package com.cbrain.cmh.selvbetjening;
 
-import android.app.*;
 import android.content.Intent;
-import android.graphics.*;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,18 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,12 +25,10 @@ public class Controller extends AppCompatActivity {
 
     private String TAG = Controller.class.getSimpleName();
 
-    private ProgressDialog pDialog;
     private ListView lv;
-    Bitmap bitmap;
     private static String http;
     private static String url;
-    private static String logoLink;
+
 
     private static final String TITLE = "title";
     private static final String LINK = "link";
@@ -46,8 +39,7 @@ public class Controller extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
-        //ImageView vi=(ImageView)findViewById(R.id.logo);
-        //vi.setImageBitmap(bitmap);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -57,7 +49,7 @@ public class Controller extends AppCompatActivity {
         http = this.getString(R.string.http);
 
         url = http + this.getString(R.string.path1);
-        //logoLink = http + this.getString(R.string.logo);
+
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
@@ -68,30 +60,18 @@ public class Controller extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Showing progress dialog
-
 
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
 
-            Document logo;
             Document doc;
             Elements links;
-            Elements img;
 
             try {
                 doc = Jsoup.connect(url).get();
                 links = doc.getElementsByClass("processlink");
-                //logo = Jsoup.connect(logoLink).get();
-                //img = logo.getElementsByClass("");
-                //String imgSrc = img.attr("src");
-
-                // Download image from URL
-                //InputStream input = new java.net.URL(imgSrc).openStream();
-                // Decode Bitmap
-                //bitmap = BitmapFactory.decodeStream(input);
 
                 linkList = ParseHTML(links);
             } catch (IOException e) {
