@@ -29,7 +29,6 @@ public class Controller extends AppCompatActivity {
     private static String http;
     private static String url;
 
-
     private static final String TITLE = "title";
     private static final String LINK = "link";
 
@@ -39,7 +38,6 @@ public class Controller extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -47,15 +45,12 @@ public class Controller extends AppCompatActivity {
         toolbar.setSubtitle("");
         linkList = new ArrayList<>();
         http = this.getString(R.string.http);
-
         url = http + this.getString(R.string.path1);
-
         lv = (ListView) findViewById(R.id.list);
         new GetLinks().execute();
     }
 
     private class GetLinks extends AsyncTask<Void, Void, Void> {
-
 
         @Override
         protected void onPreExecute() {
@@ -72,7 +67,6 @@ public class Controller extends AppCompatActivity {
             try {
                 doc = Jsoup.connect(url).get();
                 links = doc.getElementsByClass("processlink");
-
                 linkList = ParseHTML(links);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -85,10 +79,10 @@ public class Controller extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
-
             ListAdapter adapter = new SimpleAdapter(
                     Controller.this, linkList,
-                    R.layout.list_item, new String[]{TITLE, LINK}, new int[]{R.id.title});
+                    R.layout.list_item, new String[]{TITLE, LINK},
+                    new int[]{R.id.title});
 
             lv.setAdapter(adapter);
         }
@@ -109,11 +103,9 @@ public class Controller extends AppCompatActivity {
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent,
-                                            View view,
-                                            int position,
-                                            long id) {
+                                            View view, int position, long id) {
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                                                          Uri.parse(linkhref));
+                                Uri.parse(linkhref));
                         startActivity(browserIntent);
                     }
                 });
