@@ -1,6 +1,7 @@
 package com.cbrain.cmh.selvbetjening;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,35 +19,36 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Controller extends AppCompatActivity {
 
     private String TAG = Controller.class.getSimpleName();
 
     private ListView lv;
-    private static String http;
     private static String url;
+    public Controller customListView = null;
 
-    private static final String TITLE = "title";
-    private static final String LINK = "link";
-
-    ArrayList<HashMap<String, String>> linkList;
+    private ListAdapter adapter;
+    private ArrayList<Selfservice> linkList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setTitle("");
-        toolbar.setSubtitle("");
+        url = this.getString(R.string.path1);
         linkList = new ArrayList<>();
-        http = this.getString(R.string.http);
-        url = http + this.getString(R.string.path1);
-        lv = (ListView) findViewById(R.id.list);
+
+
+        customListView = this;
         new GetLinks().execute();
+
+        Resources res =getResources();
+        lv = (ListView)findViewById(R.id.list);
+
+        adapter=new CustomAdapter(customListView, linkList,res);
+
+        setupListViewItemClick();
+        lv.setAdapter(adapter);
     }
 
     private class GetLinks extends AsyncTask<Void, Void, Void> {
@@ -65,7 +66,7 @@ public class Controller extends AppCompatActivity {
             Elements links;
 
             try {
-                doc = Jsoup.connect(url).get();
+                doc = Jsoup.connect(url).timeout(15*1000).get();
                 links = doc.getElementsByClass("processlink");
                 linkList = ParseHTML(links);
             } catch (IOException e) {
@@ -78,43 +79,59 @@ public class Controller extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-
-            ListAdapter adapter = new SimpleAdapter(
-                    Controller.this, linkList,
-                    R.layout.list_item, new String[]{TITLE, LINK},
-                    new int[]{R.id.title});
-
-            lv.setAdapter(adapter);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            toolbar.setTitle("");
+            toolbar.setSubtitle("");
         }
 
     }
 
-    private ArrayList<HashMap<String, String>> ParseHTML(Elements links) throws IOException {
+    private void setupListViewItemClick() {
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent,
+                                    View view, int position, long id) {
+
+                // Get the student by the position of the adapter.
+                Selfservice self = linkList.get(position);
+                String linkhref = self.getLink();
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(linkhref));
+                startActivity(browserIntent);
+            }
+        });
+    }
+
+    public void onItemClick(int mPosition)
+    {
+        Selfservice tempValues = linkList.get(mPosition);
+
+
+        // SHOW ALERT
+
+        Toast.makeText(customListView, "" +tempValues.getTitle()+"Link: "+tempValues.getLink(), Toast.LENGTH_LONG).show();
+    }
+
+    private ArrayList<Selfservice> ParseHTML(Elements links) throws IOException {
 
         if (links != null) {
 
-            ArrayList<HashMap<String, String>> linkList = new ArrayList<>();
+            //final ArrayList<HashMap<String, String>> linkList = new ArrayList<>();
 
             for (Element link : links) {
 
-                final String linkhref = http + link.select("a").attr("href");
+                //final String linkhref = http + link.select("a").attr("href");
                 String linktext = link.text();
 
-                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent,
-                                            View view, int position, long id) {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(linkhref));
-                        startActivity(browserIntent);
-                    }
-                });
-                HashMap<String, String> student = new HashMap<>();
+                final Selfservice self = new Selfservice();
 
-                student.put(TITLE, linktext);
-                student.put(LINK, linkhref);
-
-                linkList.add(student);
+                self.setTitle(linktext);
+                self.setLink(link);
+                //Log.i(TAG, "titel: " + linktext + " link: " + linkhref);
+                linkList.add(self);
             }
 
             return linkList;
