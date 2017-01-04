@@ -1,7 +1,11 @@
 package com.cbrain.cmh.selvbetjening;
 
+import android.app.Activity;
+import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,39 +23,37 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
 
-public class Controller extends AppCompatActivity {
+public class Controller extends Activity {
 
     private String TAG = Controller.class.getSimpleName();
-
+    private String http;
+    CustomAdapter adapter;
+    public Controller con = null;
     private ListView lv;
     private static String url;
-    public Controller customListView = null;
-
-    private ListAdapter adapter;
-    private ArrayList<Selfservice> linkList;
+    ArrayList<Selfservice> linkList = new ArrayList<Selfservice>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
+        con = this;
+        http = this.getString(R.string.http);
         url = this.getString(R.string.path1);
-        linkList = new ArrayList<>();
 
-
-        customListView = this;
         new GetLinks().execute();
 
-        Resources res =getResources();
         lv = (ListView)findViewById(R.id.list);
 
-        adapter=new CustomAdapter(customListView, linkList,res);
-
-        setupListViewItemClick();
-        lv.setAdapter(adapter);
+        //Resources res = getResources();
+        //adapter = new CustomAdapter(con, linkList, res);
+        //lv.setAdapter(adapter);
     }
 
-    private class GetLinks extends AsyncTask<Void, Void, Void> {
+    private class GetLinks extends AsyncTask<Void, Void, List<Selfservice>> {
 
         @Override
         protected void onPreExecute() {
@@ -60,59 +62,52 @@ public class Controller extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... arg0) {
+        protected List<Selfservice> doInBackground(Void... arg0) {
+                    Document doc;
+                    Elements links;
+                    List<Selfservice> returnList = null;
+                    try {
+                        doc = Jsoup.connect(url).timeout(10000).get();
+                        links = doc.getElementsByClass("processlink");
+                        returnList = ParseHTML(links);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-            Document doc;
-            Elements links;
-
-            try {
-                doc = Jsoup.connect(url).timeout(15*1000).get();
-                links = doc.getElementsByClass("processlink");
-                linkList = ParseHTML(links);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
+            return returnList;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(final List<Selfservice> result) {
             super.onPostExecute(result);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            toolbar.setTitle("");
-            toolbar.setSubtitle("");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                    //setSupportActionBar(toolbar);
+                    //getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    toolbar.setTitle("");
+                    toolbar.setSubtitle("");
+                    Resources res = getResources();
+                    //Log.e(TAG, linkList.toString());
+                    linkList = (ArrayList<Selfservice>) result;
+                    adapter = new CustomAdapter(con, result, res);
+                    adapter.notifyDataSetChanged();
+                    lv.setAdapter(adapter);
+                }
+            });
+
         }
 
     }
 
-    private void setupListViewItemClick() {
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent,
-                                    View view, int position, long id) {
 
-                // Get the student by the position of the adapter.
-                Selfservice self = linkList.get(position);
-                String linkhref = self.getLink();
 
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(linkhref));
-                startActivity(browserIntent);
-            }
-        });
-    }
-
-    public void onItemClick(int mPosition)
+    public void onItemClick(int mPos)
     {
-        Selfservice tempValues = linkList.get(mPosition);
+        Selfservice self = linkList.get(mPos);
 
-
-        // SHOW ALERT
-
-        Toast.makeText(customListView, "" +tempValues.getTitle()+"Link: "+tempValues.getLink(), Toast.LENGTH_LONG).show();
+        Toast.makeText(con, "" +self.getTitle()+"Link: "+self.getLink(), Toast.LENGTH_LONG).show();
     }
 
     private ArrayList<Selfservice> ParseHTML(Elements links) throws IOException {
@@ -123,18 +118,20 @@ public class Controller extends AppCompatActivity {
 
             for (Element link : links) {
 
-                //final String linkhref = http + link.select("a").attr("href");
+                final String linkhref = http + link.select("a").attr("href");
                 String linktext = link.text();
 
-                final Selfservice self = new Selfservice();
+                final Selfservice self = new Selfservice(linktext, linkhref);
 
                 self.setTitle(linktext);
-                self.setLink(link);
-                //Log.i(TAG, "titel: " + linktext + " link: " + linkhref);
+                self.setLink(linkhref);
+                //Log.i(TAG, "titel: " + linktext + "link: " + linkhref);
                 linkList.add(self);
-            }
 
+            }
+            Log.i(TAG, "" + linkList.size());
             return linkList;
+
         }
         else {
             Log.e(TAG, "Couldn't get html from server.");

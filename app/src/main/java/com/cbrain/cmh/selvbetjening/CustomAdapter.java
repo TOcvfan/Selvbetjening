@@ -1,6 +1,10 @@
 package com.cbrain.cmh.selvbetjening;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+
+import android.view.LayoutInflater;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -9,118 +13,85 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/********* Adapter class extends with BaseAdapter and implements with OnClickListener ************/
 public class CustomAdapter extends BaseAdapter implements OnClickListener {
-
-    /*********** Declare Used Variables *********/
+    private String TAG = CustomAdapter.class.getSimpleName();
+    Context context;
+    List<Selfservice> data;
     private Activity activity;
-    private ArrayList data;
-    private static LayoutInflater inflater=null;
     public Resources res;
-    Selfservice tempValues = null;
-    int i=0;
+    Selfservice self = null;
+    private static LayoutInflater inflater;
+    int layoutResourceId = 0;
 
-    /*************  CustomAdapter Constructor *****************/
-    public CustomAdapter(Activity a, ArrayList d,Resources resLocal) {
-
-        /********** Take passed values **********/
-        activity = a;
-        data = d;
-        res = resLocal;
-
-        /***********  Layout inflator to call external xml layout () **********************/
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+    public CustomAdapter(Context context, List<Selfservice> dataList, Resources resources) {
+        res = resources;
+        //activity = act;
+        data = dataList;
+        this.context = context;
     }
 
-    /******** What is the size of Passed Arraylist Size ************/
-    public int getCount() {
+    private class Holder {
+        TextView title;
+        TextView link;
+    }
 
+    @Override
+    public int getCount() {
         if(data.size()<=0)
             return 1;
         return data.size();
     }
 
-    public Object getItem(int position) {
-        return position;
-    }
-
-    public long getItemId(int position) {
-        return position;
-    }
-
-    /********* Create a holder to contain inflated xml file elements ***********/
-    public static class ViewHolder{
-
-        public TextView title;
-        public ImageView link;
-
-    }
-
-    /*********** Depends upon data size called for each row , Create each ListView row ***********/
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        View vi = convertView;
-        ViewHolder holder;
-
-        if(convertView == null){
-
-            /********** Inflate tabitem.xml file for each row ( Defined below ) ************/
-            vi = inflater.inflate(R.layout.list_item, null);
-
-            /******** View Holder Object to contain tabitem.xml file elements ************/
-            holder = new ViewHolder();
-            holder.title = (TextView)vi.findViewById(R.id.title);
-
-            holder.link = (ImageView)vi.findViewById(R.id.link);
-
-            vi.setTag(holder);
-        }
-        else
-            holder=(ViewHolder)vi.getTag();
-
-        if(data.size()<=0)
-        {
-            //holder.title.setText("No Data");
-
-        }
-        else
-        {
-            /***** Get each Model object from Arraylist ********/
-            tempValues = null;
-            tempValues = (Selfservice) data.get(position);
-
-            /************  Set Model values in Holder elements ***********/
-            holder.title.setText(tempValues.getTitle());
-            holder.link.setImageResource(res.getIdentifier("com.cbrain.cmh.selvbetjening:drawable/"+tempValues.getLink(),null,null));
-
-            /******** Set Item Click Listner for LayoutInflater for each row ***********/
-            vi.setOnClickListener(new OnItemClickListener(position));
-        }
-        return vi;
+    @Override
+    public Object getItem(int pos) {
+        return pos;
     }
 
     @Override
-    public void onClick(View v) {
-        Log.v("CustomAdapter", "=====Row button clicked");
+    public long getItemId(int pos) {
+        return pos;
     }
 
-    /********* Called when Item click in ListView ************/
-    private class OnItemClickListener  implements OnClickListener{
-        private int mPosition;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-        OnItemClickListener(int position){
-            mPosition = position;
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rowView = convertView;
+        Holder holder;
+
+        if(rowView == null){
+
+            rowView = inflater.inflate(R.layout.list_item, null);
+            holder = new Holder();
+            holder.title = (TextView) rowView.findViewById(R.id.title);
+            holder.link = (TextView) rowView.findViewById(R.id.link);
+
+            rowView.setTag(holder);
+
+        }else{
+            holder = (Holder)rowView.getTag();
+        }
+        if(data.size()<=0){
+            holder.title.setText("did not work");
+        }else{
+            self = null;
+            self = (Selfservice) data.get(position);
+            holder.title.setText(self.getTitle());
+            holder.link.setText(self.getLink());
+            //Log.i(TAG, "adapter");
         }
 
-        @Override
-        public void onClick(View arg0) {
-            Controller con = (Controller) activity;
-            con.onItemClick(mPosition);
+        return rowView;
         }
+    @Override
+    public void onClick(View v){
+        Log.v("CustomAdapter", "row clicked");
     }
+
 }
