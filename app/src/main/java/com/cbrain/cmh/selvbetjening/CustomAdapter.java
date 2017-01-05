@@ -1,37 +1,28 @@
 package com.cbrain.cmh.selvbetjening;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.view.LayoutInflater;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+import java.util.List;
 
 public class CustomAdapter extends BaseAdapter implements OnClickListener {
     private String TAG = CustomAdapter.class.getSimpleName();
     Context context;
     List<Selfservice> data;
-    private Activity activity;
+
     public Resources res;
     Selfservice self = null;
     private static LayoutInflater inflater;
-    int layoutResourceId = 0;
+
 
     public CustomAdapter(Context context, List<Selfservice> dataList, Resources resources) {
         res = resources;
-        //activity = act;
         data = dataList;
         this.context = context;
     }
@@ -43,7 +34,7 @@ public class CustomAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public int getCount() {
-        if(data.size()<=0)
+        if(data.size() == 0)
             return 1;
         return data.size();
     }
@@ -61,7 +52,7 @@ public class CustomAdapter extends BaseAdapter implements OnClickListener {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = convertView;
         Holder holder;
 
@@ -77,7 +68,7 @@ public class CustomAdapter extends BaseAdapter implements OnClickListener {
         }else{
             holder = (Holder)rowView.getTag();
         }
-        if(data.size()<=0){
+        if(data.size() <= 0){
             holder.title.setText("did not work");
         }else{
             self = null;
@@ -89,6 +80,7 @@ public class CustomAdapter extends BaseAdapter implements OnClickListener {
 
         return rowView;
         }
+
     @Override
     public void onClick(View v){
         Log.v("CustomAdapter", "row clicked");

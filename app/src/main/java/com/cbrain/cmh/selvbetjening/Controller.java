@@ -1,20 +1,16 @@
 package com.cbrain.cmh.selvbetjening;
 
 import android.app.Activity;
-import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 import org.jsoup.Jsoup;
@@ -24,7 +20,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
 
 public class Controller extends Activity {
 
@@ -48,9 +43,6 @@ public class Controller extends Activity {
 
         lv = (ListView)findViewById(R.id.list);
 
-        //Resources res = getResources();
-        //adapter = new CustomAdapter(con, linkList, res);
-        //lv.setAdapter(adapter);
     }
 
     private class GetLinks extends AsyncTask<Void, Void, List<Selfservice>> {
@@ -84,16 +76,25 @@ public class Controller extends Activity {
                 @Override
                 public void run() {
                     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-                    //setSupportActionBar(toolbar);
-                    //getSupportActionBar().setDisplayShowTitleEnabled(false);
+
                     toolbar.setTitle("");
                     toolbar.setSubtitle("");
                     Resources res = getResources();
                     //Log.e(TAG, linkList.toString());
                     linkList = (ArrayList<Selfservice>) result;
+
                     adapter = new CustomAdapter(con, result, res);
                     adapter.notifyDataSetChanged();
                     lv.setAdapter(adapter);
+                    lv.setOnItemClickListener(new OnItemClickListener(){
+
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                            Selfservice self = linkList.get(position);
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(self.getLink()));
+                            startActivity(browserIntent);
+                        }
+                    });
                 }
             });
 
@@ -101,20 +102,9 @@ public class Controller extends Activity {
 
     }
 
-
-
-    public void onItemClick(int mPos)
-    {
-        Selfservice self = linkList.get(mPos);
-
-        Toast.makeText(con, "" +self.getTitle()+"Link: "+self.getLink(), Toast.LENGTH_LONG).show();
-    }
-
     private ArrayList<Selfservice> ParseHTML(Elements links) throws IOException {
 
         if (links != null) {
-
-            //final ArrayList<HashMap<String, String>> linkList = new ArrayList<>();
 
             for (Element link : links) {
 
@@ -125,11 +115,11 @@ public class Controller extends Activity {
 
                 self.setTitle(linktext);
                 self.setLink(linkhref);
-                //Log.i(TAG, "titel: " + linktext + "link: " + linkhref);
+
                 linkList.add(self);
 
             }
-            Log.i(TAG, "" + linkList.size());
+
             return linkList;
 
         }
