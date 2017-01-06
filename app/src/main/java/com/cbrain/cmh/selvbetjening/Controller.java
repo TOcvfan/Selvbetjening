@@ -27,6 +27,7 @@ public class Controller extends Activity {
     private String http;
     CustomAdapter adapter;
     public Controller con = null;
+    String className;
     private ListView lv;
     private static String url;
     ArrayList<Selfservice> linkList = new ArrayList<Selfservice>();
@@ -36,6 +37,7 @@ public class Controller extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_view);
         con = this;
+        className = this.getString(R.string.class_name);
         http = this.getString(R.string.http);
         url = this.getString(R.string.path1);
 
@@ -60,7 +62,7 @@ public class Controller extends Activity {
                     List<Selfservice> returnList = null;
                     try {
                         doc = Jsoup.connect(url).timeout(10000).get();
-                        links = doc.getElementsByClass("processlink");
+                        links = doc.getElementsByClass(className);
                         returnList = ParseHTML(links);
                     } catch (IOException e) {
                         e.printStackTrace();
