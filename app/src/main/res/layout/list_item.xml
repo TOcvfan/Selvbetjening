@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/background_main">
+
 
     <ImageView
         android:id="@+id/arrow"
@@ -22,7 +24,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="2dip"
         android:paddingTop="2dip"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/link"
         android:textSize="8sp"
         android:textStyle="italic"
         android:text="Link"
@@ -38,7 +40,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/title"
         android:textSize="16sp"
         android:textStyle="bold"
         android:text="Title"

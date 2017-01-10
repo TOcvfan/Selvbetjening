@@ -5,4 +5,10 @@
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="background_splash">#303F9F</color><!--baggrundsfarve på startside-->
+    <color name="background_main">#ffffff</color><!--baggrundsfarve på hovedside-->
+    <color name="subtitle">#3F51B5</color><!--farve på tekst under logo-->
+    <color name="title">#303F9F</color><!--farve på titel til linket-->
+    <color name="link">#3F51B5</color><!--farve på linkteksten-->
+    <!--farver skrives i hex og kan findes ved at søge "color codes hex"-->
 </resources>
